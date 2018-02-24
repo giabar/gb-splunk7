@@ -1,4 +1,4 @@
-FROM giabar/gb-centos7
+FROM centos:7
 LABEL maintainer="info@giabar.com"
 
 ENV SPLUNK_PRODUCT splunk
