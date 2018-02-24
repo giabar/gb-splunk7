@@ -14,7 +14,7 @@ ENV SPLUNK_BACKUP_DEFAULT_ETC /var/opt/splunk
 RUN groupadd -r ${SPLUNK_GROUP} &&\
     useradd -r -m -g ${SPLUNK_GROUP} ${SPLUNK_USER} &&\
     mkdir -p ${SPLUNK_HOME} &&\
-    yum -y install wget &&\
+    yum -y install wget sudo &&\
     wget -qO /tmp/${SPLUNK_FILENAME} https://download.splunk.com/products/${SPLUNK_PRODUCT}/releases/${SPLUNK_VERSION}/linux/${SPLUNK_FILENAME} &&\
     wget -qO /tmp/${SPLUNK_FILENAME}.md5 https://download.splunk.com/products/${SPLUNK_PRODUCT}/releases/${SPLUNK_VERSION}/linux/${SPLUNK_FILENAME}.md5 &&\
     (cd /tmp && md5sum -c ${SPLUNK_FILENAME}.md5) &&\
