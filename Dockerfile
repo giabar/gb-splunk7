@@ -1,5 +1,5 @@
 FROM giabar/gb-centos7
-LABEL maintainer=giabar.ocm
+LABEL maintainer="info@giabar.com"
 
 ENV SPLUNK_PRODUCT splunk
 ENV SPLUNK_VERSION 7.0.2
