@@ -1,6 +1,11 @@
 FROM giabar/gb-centos7
 LABEL maintainer=giabar.ocm
 
+ENV SPLUNK_PRODUCT splunk
+ENV SPLUNK_VERSION 7.0.2
+ENV SPLUNK_BUILD 03bbabbd5c0f
+ENV SPLUNK_FILENAME splunk-${SPLUNK_VERSION}-${SPLUNK_BUILD}-Linux-x86_64.tgz
+
 ENV SPLUNK_HOME /opt/splunk
 ENV SPLUNK_GROUP splunk
 ENV SPLUNK_USER splunk
@@ -8,9 +13,13 @@ ENV SPLUNK_BACKUP_DEFAULT_ETC /var/opt/splunk
 
 RUN groupadd -r ${SPLUNK_GROUP} &&\
     useradd -r -m -g ${SPLUNK_GROUP} ${SPLUNK_USER} &&\
-    wget -O splunk-7.0.2-03bbabbd5c0f-Linux-x86_64.tgz 'https://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=linux&version=7.0.2&product=splunk&filename=splunk-7.0.2-03bbabbd5c0f-Linux-x86_64.tgz&wget=true' &&\
-    tar zxvf splunk-7.0.2-03bbabbd5c0f-Linux-x86_64.tgz -C /opt &&\
-    rm -f splunk-7.0.2-03bbabbd5c0f-Linux-x86_64.tgz &&\
+    mkdir -p ${SPLUNK_HOME} &&\
+    wget -qO /tmp/${SPLUNK_FILENAME} https://download.splunk.com/products/${SPLUNK_PRODUCT}/releases/${SPLUNK_VERSION}/linux/${SPLUNK_FILENAME} &&\
+    wget -qO /tmp/${SPLUNK_FILENAME}.md5 https://download.splunk.com/products/${SPLUNK_PRODUCT}/releases/${SPLUNK_VERSION}/linux/${SPLUNK_FILENAME}.md5 &&\
+    (cd /tmp && md5sum -c ${SPLUNK_FILENAME}.md5) &&\
+    tar xzf /tmp/${SPLUNK_FILENAME} --strip 1 -C ${SPLUNK_HOME} &&\
+    rm /tmp/${SPLUNK_FILENAME} &&\
+    rm /tmp/${SPLUNK_FILENAME}.md5 &&\
     mkdir -p /var/opt/splunk &&\
     cp -R ${SPLUNK_HOME}/etc ${SPLUNK_BACKUP_DEFAULT_ETC} &&\
     rm -fR ${SPLUNK_HOME}/etc &&\
