@@ -1,0 +1,45 @@
+version: '3.3'
+services:
+
+  splunkdeploymentserver:
+    hostname: splunkdeploymentserver
+    image: giabar/gb-splunk7
+    environment:
+      SPLUNK_START_ARGS: --accept-license --answer-yes
+      SPLUNK_ENABLE_DEPLOY_SERVER: "true"
+    ports:
+      - "7800:8000"
+      - 8089
+    volumes:
+      - /dockersData/splunkdeploymentserver/etc:/opt/splunk/etc
+      - /dockersData/splunkdeploymentserver/var:/opt/splunk/var
+
+  splunkenterprise:
+    hostname: splunkenterprise
+    image: giabar/gb-splunk7
+    environment:
+      SPLUNK_START_ARGS: --accept-license --answer-yes
+      SPLUNK_ENABLE_LISTEN: 9997
+    ports:
+      - "8000:8000"
+      - "9997:9997"
+    volumes:
+      - /dockersData/splunkenterprise/etc:/opt/splunk/etc
+      - /dockersData/splunkenterprise/var:/opt/splunk/var
+
+  splunkuniversalforwarder:
+    hostname: splunkuniversalforwarder
+    image: splunk/universalforwarder:7.0.3
+    environment:
+      SPLUNK_START_ARGS: --accept-license --answer-yes
+      SPLUNK_FORWARD_SERVER: "splunkenterprise:9997"
+      SPLUNK_FORWARD_SERVER_ARGS: "-method clone"
+      SPLUNK_ADD: "udp 1514"
+      SPLUNK_DEPLOYMENT_SERVER: "splunkdeploymentserver:8089"
+    ports:
+      - 8088
+      - 1514
+    volumes:
+      - /dockersData/splunkuniversalforwarder/etc:/opt/splunk/etc
+      - /dockersData/splunkuniversalforwarder/var:/opt/splunk/var
+
