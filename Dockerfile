@@ -1,9 +1,9 @@
-FROM centos:7.5.1804
+FROM centos:7.6.1810
 LABEL maintainer="info@giabar.com"
 
 ENV SPLUNK_PRODUCT splunk
-ENV SPLUNK_VERSION 7.0.3
-ENV SPLUNK_BUILD fa31da744b51
+ENV SPLUNK_VERSION 7.3.1
+ENV SPLUNK_BUILD bd63e13aa157
 ENV SPLUNK_FILENAME splunk-${SPLUNK_VERSION}-${SPLUNK_BUILD}-Linux-x86_64.tgz
 
 ENV SPLUNK_HOME /opt/splunk
@@ -11,10 +11,11 @@ ENV SPLUNK_GROUP splunk
 ENV SPLUNK_USER splunk
 ENV SPLUNK_BACKUP_DEFAULT_ETC /var/opt/splunk
 
-RUN groupadd -r ${SPLUNK_GROUP} &&\
+RUN yum update -y &&\
+    yum -y install wget sudo &&\
+    groupadd -r ${SPLUNK_GROUP} &&\
     useradd -r -m -g ${SPLUNK_GROUP} ${SPLUNK_USER} &&\
     mkdir -p ${SPLUNK_HOME} &&\
-    yum -y install wget sudo &&\
     wget -qO /tmp/${SPLUNK_FILENAME} https://download.splunk.com/products/${SPLUNK_PRODUCT}/releases/${SPLUNK_VERSION}/linux/${SPLUNK_FILENAME} &&\
     wget -qO /tmp/${SPLUNK_FILENAME}.md5 https://download.splunk.com/products/${SPLUNK_PRODUCT}/releases/${SPLUNK_VERSION}/linux/${SPLUNK_FILENAME}.md5 &&\
     (cd /tmp && md5sum -c ${SPLUNK_FILENAME}.md5) &&\
